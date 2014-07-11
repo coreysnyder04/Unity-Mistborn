@@ -5,8 +5,9 @@ using System.Collections;
 public class PlayerController : MonoBehaviour {
 	
 	public float speed = 8;
-	public float acceleration = 12;
+	public float acceleration = 30;
 	public float gravity = 20;
+	public float jumpHeight = 12;
 	
 	private float currentSpeed;
 	private float targetSpeed;
@@ -24,6 +25,13 @@ public class PlayerController : MonoBehaviour {
 	void Update () {
 		targetSpeed = Input.GetAxisRaw("Horizontal") * speed;
 		currentSpeed = IncrementTowards(currentSpeed, targetSpeed, acceleration);
+		
+		if(playerPhysics.grounded){
+			amountToMove.y = 0;
+			if(Input.GetButtonDown("Jump")){
+				amountToMove.y = jumpHeight;	
+			}
+		}
 		
 		amountToMove.x = currentSpeed;
 		amountToMove.y -= gravity * Time.deltaTime;

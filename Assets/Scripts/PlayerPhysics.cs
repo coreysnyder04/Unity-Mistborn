@@ -38,12 +38,16 @@ public class PlayerPhysics : MonoBehaviour {
 		float dir;
 		float x;
 		float y;
+		grounded = false;
 		for(int i = 0; i<3; i++){
+			
+			
 			dir = Mathf.Sign(deltaY);
 			x = (p.x + c.x - s.x/2) + s.x/2 * i; // Left, center and then right most point of collider;
 			y = p.y + c.y + s.y/2 * dir; // B ottom of Collider
 			
 			ray = new Ray(new Vector2(x,y), new Vector2(0,dir));
+			Debug.DrawRay(ray.origin, ray.direction);
 			
 			if(Physics.Raycast(ray, out hit, Mathf.Abs(deltaY), collisionMask)){
 				// Get distance between player and ground
