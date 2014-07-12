@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour {
 	private float currentSpeed;
 	private float targetSpeed;
 	private Vector2 amountToMove;
+	private float animationSpeed;
 	
 	private PlayerPhysics playerPhysics;
 	private Animator animator;
@@ -39,7 +40,8 @@ public class PlayerController : MonoBehaviour {
 			}
 		}
 
-		animator.SetFloat("Speed", Mathf.Abs(currentSpeed));
+		animationSpeed = IncrementTowards(animationSpeed, Mathf.Abs(targetSpeed), acceleration);
+		animator.SetFloat("Speed", Mathf.Abs(animationSpeed));
 
 		//Input 
 		float speed = ( Input.GetButton("Run") ) ? runSpeed : walkSpeed;
@@ -50,7 +52,14 @@ public class PlayerController : MonoBehaviour {
 		amountToMove.x = currentSpeed;
 		amountToMove.y -= gravity * Time.deltaTime;
 		playerPhysics.Move(amountToMove * Time.deltaTime);
-		
+
+
+		// Face right direction
+		float movementDirection = Input.GetAxisRaw("Horizontal");
+		if(movementDirection != 0){
+			transform.eulerAngles = (movementDirection > 0) ? Vector3.up * 180 : Vector3.zero;
+		}
+
 	}
 	
 	// Increase n towards target by space
