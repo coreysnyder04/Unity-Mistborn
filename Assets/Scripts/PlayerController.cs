@@ -4,7 +4,8 @@ using System.Collections;
 [RequireComponent(typeof(PlayerPhysics))]
 public class PlayerController : MonoBehaviour {
 	
-	public float speed = 8;
+	public float walkSpeed = 8;
+	public float runSpeed = 12;
 	public float acceleration = 30;
 	public float gravity = 20;
 	public float jumpHeight = 12;
@@ -14,11 +15,13 @@ public class PlayerController : MonoBehaviour {
 	private Vector2 amountToMove;
 	
 	private PlayerPhysics playerPhysics;
+	private Animator animator;
 	
 	
 	// Use this for initialization
 	void Start () {
 		playerPhysics = GetComponent<PlayerPhysics>();
+		animator = GetComponent<Animator>();
 	}
 	
 	// Update is called once per frame
@@ -28,17 +31,22 @@ public class PlayerController : MonoBehaviour {
 			targetSpeed = 0;
 			currentSpeed = 0;
 		}
-		
-		targetSpeed = Input.GetAxisRaw("Horizontal") * speed;
-		currentSpeed = IncrementTowards(currentSpeed, targetSpeed, acceleration);
-		
+
 		if(playerPhysics.grounded){
 			amountToMove.y = 0;
 			if(Input.GetButtonDown("Jump")){
 				amountToMove.y = jumpHeight;	
 			}
 		}
-		
+
+		animator.SetFloat("Speed", Mathf.Abs(currentSpeed));
+
+		//Input 
+		float speed = ( Input.GetButton("Run") ) ? runSpeed : walkSpeed;
+		targetSpeed = Input.GetAxisRaw("Horizontal") * speed;
+		currentSpeed = IncrementTowards(currentSpeed, targetSpeed, acceleration);
+
+		// Set amount to move
 		amountToMove.x = currentSpeed;
 		amountToMove.y -= gravity * Time.deltaTime;
 		playerPhysics.Move(amountToMove * Time.deltaTime);

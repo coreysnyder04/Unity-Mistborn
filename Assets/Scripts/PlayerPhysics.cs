@@ -6,6 +6,12 @@ public class PlayerPhysics : MonoBehaviour {
 	private BoxCollider collider;
 	private Vector3 s; // Size
 	private Vector3 c; // Center
+	private Vector3 originalSize;
+	private Vector3 originalCenter;
+	private float colliderScale;
+	private int collisionDivisionsX = 3;
+	private int collisionDivisionsY = 10;
+
 	
 	public LayerMask collisionMask;
 	Ray ray;
@@ -20,8 +26,10 @@ public class PlayerPhysics : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		collider = GetComponent<BoxCollider>();
-		s = collider.size;
-		c = collider.center;
+		colliderScale = transform.localScale.x;
+		originalSize = collider.size;
+		originalCenter = collider.center;
+		SetCollider(originalSize, originalCenter);
 	}
 	
 	// Update is called once per frame
@@ -44,11 +52,10 @@ public class PlayerPhysics : MonoBehaviour {
 		
 		
 		// Top/Bottom Collisions
-		for(int i = 0; i<3; i++){
-			
-			
+		for(int i = 0; i<collisionDivisionsX; i++){
+
 			dir = Mathf.Sign(deltaY);
-			x = (p.x + c.x - s.x/2) + s.x/2 * i; // Left, center and then right most point of collider;
+			x = (p.x + c.x - s.x/2) + s.x/(collisionDivisionsX-1) * i; // Left, center and then right most point of collider;
 			y = p.y + c.y + s.y/2 * dir; // Bottom of Collider
 			
 			ray = new Ray(new Vector2(x,y), new Vector2(0,dir));
@@ -71,12 +78,12 @@ public class PlayerPhysics : MonoBehaviour {
 		
 		// Left & Right Collisions
 		movementStop = false;
-		for(int i = 0; i<3; i++){
+		for(int i = 0; i<collisionDivisionsY; i++){
 			
 			
 			dir = Mathf.Sign(deltaX);
 			x = p.x + c.x + s.x/2 * dir; // Left, center and then right most point of collider;
-			y = p.y + c.y - s.y/2 + s.y/2 * i; // Bottom of Collider
+			y = p.y + c.y - s.y/2 + s.y/(collisionDivisionsY-1) * i; // Bottom of Collider
 			
 			ray = new Ray(new Vector2(x,y), new Vector2(dir,0));
 			Debug.DrawRay(ray.origin, ray.direction);
@@ -96,7 +103,30 @@ public class PlayerPhysics : MonoBehaviour {
 			}
 		}
 		
+		if(!grounded && !movementStop){
+		// Direction the player is moving
+			Vector3 playerDirection = new Vector3(deltaX, deltaY);
+			Vector3 origin = new Vector3( (p.x + c.x + s.x/2 * Mathf.Sign (deltaX)), (p.y + c.y + s.y/2 * Mathf.Sign(deltaY)) );
+			Debug.DrawRay(origin, playerDirection.normalized);
+			ray = new Ray(origin, playerDirection.normalized);
+			if(Physics.Raycast(ray, Mathf.Sqrt(deltaX * deltaX + deltaY * deltaY), collisionMask)){
+				grounded = true;
+				deltaY = 0;
+			}
+		}
+		
+		
+		
+		
 		Vector2 finalTransform = new Vector2(deltaX, deltaY);
 		transform.Translate(finalTransform);
+	}
+
+	public void SetCollider(Vector3 size, Vector3 center){
+		collider.size = size;
+		collider.center = center;
+
+		s = size * colliderScale;
+		c = center * colliderScale;
 	}
 }
