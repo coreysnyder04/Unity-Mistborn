@@ -1,18 +1,13 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-firstpass", "Assembly-CSharp-firstpass.csproj", "{58F5C2BB-D6D8-E9B0-A5D4-5054762B2632}"
+# Visual Studio 2008
+
+Project("{25F483EC-87CB-E81C-504A-ED856E3BF9AC}") = "Mistborn", "Assembly-CSharp-firstpass.csproj", "{58F5C2BB-D6D8-E9B0-A5D4-5054762B2632}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{E225A236-95F2-1FF5-4161-9BE51F314376}"
+Project("{25F483EC-87CB-E81C-504A-ED856E3BF9AC}") = "Mistborn", "Assembly-CSharp.csproj", "{E225A236-95F2-1FF5-4161-9BE51F314376}"
 EndProject
-Project("{b955b5aa-9c1c-4cd6-9a10-9e34431be3eb}") = "Assembly-UnityScript-firstpass", "Assembly-UnityScript-firstpass.unityproj", "{A1D9268D-7E33-F3A8-961A-9A1A274F66A2}"
+Project("{25F483EC-87CB-E81C-504A-ED856E3BF9AC}") = "Mistborn", "Assembly-UnityScript-firstpass.unityproj", "{A1D9268D-7E33-F3A8-961A-9A1A274F66A2}"
 EndProject
-Project("{b955b5aa-9c1c-4cd6-9a10-9e34431be3eb}") = "Assembly-UnityScript", "Assembly-UnityScript.unityproj", "{954088E6-E2E4-07E2-1411-2C175B9DEBDD}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8B748FB2-FE0A-4F3F-ACC1-798E5FDA0DB5}"
-	ProjectSection(SolutionItems) = preProject
-		.gitignore = .gitignore
-	EndProjectSection
+Project("{25F483EC-87CB-E81C-504A-ED856E3BF9AC}") = "Mistborn", "Assembly-UnityScript.unityproj", "{954088E6-E2E4-07E2-1411-2C175B9DEBDD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,22 +19,23 @@ Global
 		{58F5C2BB-D6D8-E9B0-A5D4-5054762B2632}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{58F5C2BB-D6D8-E9B0-A5D4-5054762B2632}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{58F5C2BB-D6D8-E9B0-A5D4-5054762B2632}.Release|Any CPU.Build.0 = Release|Any CPU
-		{954088E6-E2E4-07E2-1411-2C175B9DEBDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{954088E6-E2E4-07E2-1411-2C175B9DEBDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{954088E6-E2E4-07E2-1411-2C175B9DEBDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{954088E6-E2E4-07E2-1411-2C175B9DEBDD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A1D9268D-7E33-F3A8-961A-9A1A274F66A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A1D9268D-7E33-F3A8-961A-9A1A274F66A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A1D9268D-7E33-F3A8-961A-9A1A274F66A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A1D9268D-7E33-F3A8-961A-9A1A274F66A2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E225A236-95F2-1FF5-4161-9BE51F314376}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E225A236-95F2-1FF5-4161-9BE51F314376}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E225A236-95F2-1FF5-4161-9BE51F314376}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E225A236-95F2-1FF5-4161-9BE51F314376}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1D9268D-7E33-F3A8-961A-9A1A274F66A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1D9268D-7E33-F3A8-961A-9A1A274F66A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1D9268D-7E33-F3A8-961A-9A1A274F66A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1D9268D-7E33-F3A8-961A-9A1A274F66A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{954088E6-E2E4-07E2-1411-2C175B9DEBDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{954088E6-E2E4-07E2-1411-2C175B9DEBDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{954088E6-E2E4-07E2-1411-2C175B9DEBDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{954088E6-E2E4-07E2-1411-2C175B9DEBDD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(MonoDevelopProperties) = preSolution
+			GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Assembly-CSharp.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1
@@ -57,7 +53,5 @@ Global
 		$3.inheritsScope = text/plain
 		$3.scope = text/plain
 	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
+
 EndGlobal

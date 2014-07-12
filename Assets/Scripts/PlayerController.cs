@@ -23,6 +23,12 @@ public class PlayerController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		
+		if(playerPhysics.movementStop){
+			targetSpeed = 0;
+			currentSpeed = 0;
+		}
+		
 		targetSpeed = Input.GetAxisRaw("Horizontal") * speed;
 		currentSpeed = IncrementTowards(currentSpeed, targetSpeed, acceleration);
 		
@@ -39,6 +45,7 @@ public class PlayerController : MonoBehaviour {
 		
 	}
 	
+	// Increase n towards target by space
 	private float IncrementTowards(float n, float target, float a){
 		if(n == target){
 			return n;
