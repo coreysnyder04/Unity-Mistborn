@@ -31,11 +31,13 @@ public class PlayerController : Entity {
 	// Components
 	private PlayerPhysics playerPhysics;
 	private Animator animator;
+	private GameManager manager;
 	
 	
 	void Start () {
 		// Init
 		initiateSlideThreshold = walkSpeed +1;
+		manager = Camera.main.GetComponent<GameManager>();
 
 		playerPhysics = GetComponent<PlayerPhysics>();
 		animator = GetComponent<Animator>();
@@ -142,7 +144,17 @@ public class PlayerController : Entity {
 		playerPhysics.Move(amountToMove * Time.deltaTime, moveDirX);
 		
 	}
-	
+
+	void OnTriggerEnter(Collider c){
+		if(c.tag == "Checkpoint"){
+			manager.SetCheckpoint(c.transform.position);
+		}
+
+		if(c.tag == "Finish"){
+			manager.EndLevel();
+		}
+	}
+
 	// Increase n towards target by speed
 	private float IncrementTowards(float n, float target, float a) {
 		if (n == target) {

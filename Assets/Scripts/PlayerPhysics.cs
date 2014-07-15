@@ -98,24 +98,24 @@ public class PlayerPhysics : MonoBehaviour {
 		movementStopped = false;
 		canWallHold = false;
 
-		if(deltaX != 0){ // Don't check for collisions left and right if we're not moving.
+		if (deltaX != 0) {
 			for (int i = 0; i<collisionDivisionsY; i ++) {
 				float dir = Mathf.Sign(deltaX);
 				float x = p.x + c.x + s.x/2 * dir;
-				float y = p.y + c.y - s.y/2 + s.y/3 * i;
+				float y = p.y + c.y - s.y/2 + s.y/(collisionDivisionsY-1) * i;
 				
 				ray = new Ray(new Vector2(x,y), new Vector2(dir,0));
 				Debug.DrawRay(ray.origin,ray.direction);
 				
 				if (Physics.Raycast(ray,out hit,Mathf.Abs(deltaX) + skin,collisionMask)) {
-
-					if(hit.collider.tag == "Wall Jump"){
-						if(Mathf.Sign(deltaX) == Mathf.Sign(moveDirX)){
+					
+					if (hit.collider.tag == "Wall Jump") {
+						
+						if (Mathf.Sign(deltaX) == Mathf.Sign(moveDirX) && moveDirX != 0) {
 							canWallHold = true;
 						}
-
 					}
-
+					
 					// Get Distance between player and ground
 					float dst = Vector3.Distance (ray.origin, hit.point);
 					

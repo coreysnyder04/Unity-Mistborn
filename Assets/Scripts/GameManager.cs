@@ -6,12 +6,25 @@ public class GameManager : MonoBehaviour {
 	private GameObject currentPlayer;
 	public GameObject player;
 	private GameCamera cam;
+	private Vector3 checkpoint;
+
+	public static int levelCount = 2;
+	public static int currentLevel = 1;
 	
 	// Use this for initialization
 	void Start () {
 		cam = GetComponent<GameCamera>();
-		SpawnPlayer(Vector3.zero);
+
+		if(GameObject.FindGameObjectWithTag("Spawn")){
+			checkpoint = GameObject.FindGameObjectWithTag("Spawn").transform.position;
+		}
+
+		SpawnPlayer(checkpoint);
 		
+	}
+
+	public void SetCheckpoint(Vector3 newCheckpoint){
+		checkpoint = newCheckpoint;
 	}
 
 	private void SpawnPlayer(Vector3 SpawnPos){
@@ -24,8 +37,18 @@ public class GameManager : MonoBehaviour {
 	void Update () {
 		if(Input.GetButtonDown("Respawn")){
 			if(!currentPlayer){
-				SpawnPlayer(Vector3.zero);	
+				SpawnPlayer(checkpoint);	
 			}
 		}
 	}
+
+	public void EndLevel(){
+		if(currentLevel < levelCount){
+			currentLevel++;
+			Application.LoadLevel("Level " + currentLevel);
+		}else{
+			Debug.Log ("END OF GAME");
+		}
+	}
+
 }
