@@ -11,16 +11,21 @@ public class PlayerController : Entity {
 	public float acceleration = 30;
 	public float jumpHeight = 12;
 	public float slideDeceleration = 10;
+	private float initiateSlideThreshold;
+
 	
 	// System
 	private float animationSpeed;
 	private float currentSpeed;
 	private float targetSpeed;
 	private Vector2 amountToMove;
+	private float moveDirX;
 	
 	// States
 	private bool jumping;
 	private bool sliding;
+	private bool stopSliding;
+	private bool wallHolding;
 	
 	
 	// Components
@@ -29,6 +34,9 @@ public class PlayerController : Entity {
 	
 	
 	void Start () {
+		// Init
+		initiateSlideThreshold = walkSpeed +1;
+
 		playerPhysics = GetComponent<PlayerPhysics>();
 		animator = GetComponent<Animator>();
 		
@@ -41,9 +49,14 @@ public class PlayerController : Entity {
 			targetSpeed = 0;
 			currentSpeed = 0;
 		}
-		
+
+
 		// If player is touching the ground
 		if (playerPhysics.grounded) {
+			if(wallHolding){
+				wallHolding = false;
+				animator.SetBool("Wall Hold",false);	
+			}
 			amountToMove.y = 0;
 			
 			// Jump logic
@@ -54,28 +67,46 @@ public class PlayerController : Entity {
 			
 			// Slide logic
 			if (sliding) {
-				if (Mathf.Abs(currentSpeed) < .25f) {
+				if (Mathf.Abs(currentSpeed) < .25f || stopSliding) {
+					stopSliding = false;
 					sliding = false;
 					animator.SetBool("Sliding",false);
 					playerPhysics.ResetCollider();
 				}
 			}
-			
-			
-			// Jump Input
-			if (Input.GetButtonDown("Jump")) {
-				amountToMove.y = jumpHeight;
-				jumping = true;
-				animator.SetBool("Jumping",true);
-			}
-			
+
 			// Slide Input
-			if (Input.GetButtonDown("Slide")) {
+			if (Input.GetButtonDown("Slide") && Mathf.Abs(currentSpeed) > initiateSlideThreshold) {
 				sliding = true;
 				animator.SetBool("Sliding",true);
 				targetSpeed = 0;
 				
 				playerPhysics.SetCollider(new Vector3(10.3f,1.5f,3), new Vector3(.35f,.75f,0));
+			}
+		}else{
+			if(!wallHolding){
+				if(playerPhysics.canWallHold){
+					wallHolding = true;
+					animator.SetBool("Wall Hold",true);
+				}
+			}
+
+		}
+
+		// Jump Input
+		if (Input.GetButtonDown("Jump")) {
+
+			if(sliding){
+				stopSliding = true;
+			}else if(playerPhysics.grounded || wallHolding){
+				amountToMove.y = jumpHeight;
+				jumping = true;
+				animator.SetBool("Jumping",true);
+				
+				if(wallHolding){
+					wallHolding = false;
+					animator.SetBool("Wall Hold", false);
+				}	
 			}
 		}
 		
@@ -84,15 +115,15 @@ public class PlayerController : Entity {
 		animator.SetFloat("Speed",animationSpeed);
 		
 		// Input
+		moveDirX = Input.GetAxisRaw("Horizontal");
 		if (!sliding) {
 			float speed = (Input.GetButton("Run"))?runSpeed:walkSpeed;
-			targetSpeed = Input.GetAxisRaw("Horizontal") * speed;
+			targetSpeed = moveDirX * speed;
 			currentSpeed = IncrementTowards(currentSpeed, targetSpeed,acceleration);
 			
 			// Face Direction
-			float moveDir = Input.GetAxisRaw("Horizontal");
-			if (moveDir !=0) {
-				transform.eulerAngles = (moveDir>0)?Vector3.up * 180:Vector3.zero;
+			if (moveDirX !=0 && !wallHolding) {
+				transform.eulerAngles = (moveDirX>0)?Vector3.up * 180:Vector3.zero;
 			}
 		}
 		else {
@@ -101,8 +132,14 @@ public class PlayerController : Entity {
 		
 		// Set amount to move
 		amountToMove.x = currentSpeed;
+		if(wallHolding){
+			amountToMove.x = 0;
+			if(Input.GetAxisRaw("Vertical") != -1){
+				amountToMove.y = 0;
+			}
+		}
 		amountToMove.y -= gravity * Time.deltaTime;
-		playerPhysics.Move(amountToMove * Time.deltaTime);
+		playerPhysics.Move(amountToMove * Time.deltaTime, moveDirX);
 		
 	}
 	

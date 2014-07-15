@@ -24,7 +24,13 @@ public class PlayerPhysics : MonoBehaviour {
 	public bool grounded;
 	[HideInInspector]
 	public bool movementStopped;
-	
+	[HideInInspector]
+	public bool canWallHold;
+
+	private Transform platform;
+	private Vector3 platformPositionOld;
+	private Vector3 deltaPlatformPosition;
+
 	Ray ray;
 	RaycastHit hit;
 	
@@ -37,12 +43,19 @@ public class PlayerPhysics : MonoBehaviour {
 		SetCollider(originalSize,originalCentre);
 	}
 	
-	public void Move(Vector2 moveAmount) {
+	public void Move(Vector2 moveAmount, float moveDirX) {
 		
 		float deltaY = moveAmount.y;
 		float deltaX = moveAmount.x;
 		Vector2 p = transform.position;
-		
+
+		if(platform){
+			deltaPlatformPosition = platform.position - platformPositionOld;
+		}else{
+			deltaPlatformPosition = Vector3.zero;
+		}
+
+		#region Vertical Collisions
 		// Check collisions above and below
 		grounded = false;
 		
@@ -55,6 +68,10 @@ public class PlayerPhysics : MonoBehaviour {
 			Debug.DrawRay(ray.origin,ray.direction);
 			
 			if (Physics.Raycast(ray,out hit,Mathf.Abs(deltaY) + skin,collisionMask)) {
+
+				platform = hit.transform;
+				platformPositionOld = platform.position;
+
 				// Get Distance between player and ground
 				float dst = Vector3.Distance (ray.origin, hit.point);
 				
@@ -70,37 +87,54 @@ public class PlayerPhysics : MonoBehaviour {
 				
 				break;
 				
+			}else{
+				platform = null;
 			}
 		}
-		
-		
+		#endregion
+	
+		#region Sideways Collisions
 		// Check collisions left and right
 		movementStopped = false;
-		for (int i = 0; i<collisionDivisionsY; i ++) {
-			float dir = Mathf.Sign(deltaX);
-			float x = p.x + c.x + s.x/2 * dir;
-			float y = p.y + c.y - s.y/2 + s.y/3 * i;
-			
-			ray = new Ray(new Vector2(x,y), new Vector2(dir,0));
-			Debug.DrawRay(ray.origin,ray.direction);
-			
-			if (Physics.Raycast(ray,out hit,Mathf.Abs(deltaX) + skin,collisionMask)) {
-				// Get Distance between player and ground
-				float dst = Vector3.Distance (ray.origin, hit.point);
+		canWallHold = false;
+
+		if(deltaX != 0){ // Don't check for collisions left and right if we're not moving.
+			for (int i = 0; i<collisionDivisionsY; i ++) {
+				float dir = Mathf.Sign(deltaX);
+				float x = p.x + c.x + s.x/2 * dir;
+				float y = p.y + c.y - s.y/2 + s.y/3 * i;
 				
-				// Stop player's downwards movement after coming within skin width of a collider
-				if (dst > skin) {
-					deltaX = dst * dir - skin * dir;
+				ray = new Ray(new Vector2(x,y), new Vector2(dir,0));
+				Debug.DrawRay(ray.origin,ray.direction);
+				
+				if (Physics.Raycast(ray,out hit,Mathf.Abs(deltaX) + skin,collisionMask)) {
+
+					if(hit.collider.tag == "Wall Jump"){
+						if(Mathf.Sign(deltaX) == Mathf.Sign(moveDirX)){
+							canWallHold = true;
+						}
+
+					}
+
+					// Get Distance between player and ground
+					float dst = Vector3.Distance (ray.origin, hit.point);
+					
+					// Stop player's downwards movement after coming within skin width of a collider
+					if (dst > skin) {
+						deltaX = dst * dir - skin * dir;
+					}
+					else {
+						deltaX = 0;
+					}
+					
+					movementStopped = true;
+					break;
+					
 				}
-				else {
-					deltaX = 0;
-				}
-				
-				movementStopped = true;
-				break;
-				
 			}
 		}
+		#endregion
+
 		
 		if (!grounded && !movementStopped) {
 			Vector3 playerDir = new Vector3(deltaX,deltaY);
@@ -112,9 +146,8 @@ public class PlayerPhysics : MonoBehaviour {
 				deltaY = 0;
 			}
 		}
-		
-		
-		Vector2 finalTransform = new Vector2(deltaX,deltaY);
+
+		Vector2 finalTransform = new Vector2(deltaX + deltaPlatformPosition.x,deltaY);
 		
 		transform.Translate(finalTransform,Space.World);
 	}
