@@ -12,6 +12,10 @@ public class PlayerController : Entity {
 	public float jumpHeight = 12;
 	public float slideDeceleration = 10;
 	private float initiateSlideThreshold;
+	// Metals
+	public float maxMetalDistance = 100;
+	public float magneticForce = 50;
+
 
 	
 	// System
@@ -131,7 +135,9 @@ public class PlayerController : Entity {
 		else {
 			currentSpeed = IncrementTowards(currentSpeed, targetSpeed,slideDeceleration);
 		}
-		
+
+		amountToMove = CheckMetalNearPlayer(amountToMove);
+
 		// Set amount to move
 		amountToMove.x = currentSpeed;
 		if(wallHolding){
@@ -142,7 +148,36 @@ public class PlayerController : Entity {
 		}
 		amountToMove.y -= gravity * Time.deltaTime;
 		playerPhysics.Move(amountToMove * Time.deltaTime, moveDirX);
-		
+
+	}
+
+	Vector3 CheckMetalNearPlayer(Vector3 amountToMove){
+		GameObject metal = GameObject.FindWithTag ("Metal");
+		Rigidbody rb = metal.rigidbody;
+
+		float distance = Vector3.Distance(transform.position, metal.transform.position);
+		if( distance < maxMetalDistance){
+			//magneticForce
+			bool metalPush = Input.GetButton("Fire1");
+			bool metalPull = Input.GetButton("Fire2");
+
+			Vector3 force = (metal.transform.position - transform.position) * Mathf.Clamp(1f - ((metal.transform.position - transform.position).magnitude / 10), 0f, magneticForce);
+			force.z = 0;
+
+			if(metalPush){
+				Debug.Log("PUSH:");
+				Debug.Log ( force);
+				rb.AddForce(force);
+			}
+			if(metalPull){
+				Debug.Log ("PULL");
+				Debug.Log ( force);
+				rb.AddForce(-force);
+			}
+		}
+
+		return amountToMove;
+
 	}
 
 	void OnTriggerEnter(Collider c){

@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour {
 	private GameCamera cam;
 	private Vector3 checkpoint;
 
-	public static int levelCount = 2;
+	public static int levelCount = 3;
 	public static int currentLevel = 1;
 	
 	// Use this for initialization
@@ -43,6 +43,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void EndLevel(){
+		Debug.Log ("LEVEL" +currentLevel); 
 		if(currentLevel < levelCount){
 			currentLevel++;
 			Application.LoadLevel("Level " + currentLevel);
